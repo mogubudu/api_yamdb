@@ -7,6 +7,7 @@ class User(AbstractUser):
         verbose_name='Биография',
         blank=True
     )
+    email = models.EmailField(max_length=254, unique=True)
 
     class Meta:
         verbose_name = 'Пользователь'
