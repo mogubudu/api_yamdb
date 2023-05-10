@@ -66,7 +66,7 @@ class Genre(models.Model):
 class Title(models.Model):
     name = models.CharField(max_length=255)
     description = models.TextField()
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.PROTECT)
     genres = models.ManyToManyField(Genre, related_name='titles')
 
     class Meta:
