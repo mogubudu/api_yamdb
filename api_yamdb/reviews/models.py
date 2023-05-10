@@ -2,33 +2,6 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
-class Category(models.Model):
-    name = models.CharField(max_length=100)
-
-    class Meta:
-        verbose_name = 'Категория'
-        verbose_name_plural = 'Категории'
-
-
-class Genre(models.Model):
-    name = models.CharField(max_length=100)
-
-    class Meta:
-        verbose_name = 'Жанр'
-        verbose_name_plural = 'Жанры'
-
-
-class Title(models.Model):
-    name = models.CharField(max_length=255)
-    description = models.TextField()
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
-    genres = models.ManyToManyField(Genre, related_name='titles')
-
-    class Meta:
-        verbose_name = 'Произведение'
-        verbose_name_plural = 'Произведения'
-
-
 class User(AbstractUser):
     ADMIN = 'admin'
     MODERATOR = 'moderator'
@@ -64,3 +37,38 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
+
+    @property
+    def is_admin(self):
+        return self.role == self.USER
+
+    @property
+    def is_moderator(self):
+        return self.role == self.MODERATOR
+
+
+class Category(models.Model):
+    name = models.CharField(max_length=100)
+
+    class Meta:
+        verbose_name = 'Категория'
+        verbose_name_plural = 'Категории'
+
+
+class Genre(models.Model):
+    name = models.CharField(max_length=100)
+
+    class Meta:
+        verbose_name = 'Жанр'
+        verbose_name_plural = 'Жанры'
+
+
+class Title(models.Model):
+    name = models.CharField(max_length=255)
+    description = models.TextField()
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    genres = models.ManyToManyField(Genre, related_name='titles')
+
+    class Meta:
+        verbose_name = 'Произведение'
+        verbose_name_plural = 'Произведения'
