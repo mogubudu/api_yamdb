@@ -28,12 +28,35 @@ class Title(models.Model):
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
 
+
 class User(AbstractUser):
+    ADMIN = 'admin'
+    MODERATOR = 'moderator'
+    USER = 'user'
+
+    CHOISES = [
+        (ADMIN, 'Администратор'),
+        (MODERATOR, 'Модератор'),
+        (USER, 'Пользователь'),
+    ]
+
+    email = models.EmailField(
+        max_length=254,
+        verbose_name='Электронная почта',
+        unique=True
+    )
+
     bio = models.TextField(
         verbose_name='Биография',
         blank=True
     )
-    email = models.EmailField(max_length=254, unique=True)
+
+    role = models.CharField(
+        verbose_name='Роль',
+        choices=CHOISES,
+        default='user',
+        max_length=30
+    )
 
     class Meta:
         verbose_name = 'Пользователь'
