@@ -27,3 +27,17 @@ class Title(models.Model):
     class Meta:
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
+
+class User(AbstractUser):
+    bio = models.TextField(
+        verbose_name='Биография',
+        blank=True
+    )
+    email = models.EmailField(max_length=254, unique=True)
+
+    class Meta:
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
+
+    def __str__(self):
+        return self.username
