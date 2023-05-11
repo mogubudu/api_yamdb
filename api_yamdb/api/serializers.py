@@ -37,7 +37,19 @@ class UserSerializer(serializers.ModelSerializer):
             queryset=User.objects.all(),
             message='Такое имя пользователя уже существует.')]
     )
-    email = serializers.EmailField(max_length=254, required=True)
+    email = serializers.EmailField(
+        max_length=254,
+        required=True,
+        validators=[UniqueValidator(
+            queryset=User.objects.all(),
+            message='Такая почта пользователя уже зарегистрирована.')])
+
+    def validate_username(self, value):
+        if value.lower() == 'me':
+            raise serializers.ValidationError(
+                'Нельзя создавать пользователя с именем "me".'
+            )
+        return value
 
     class Meta:
         model = User
@@ -47,3 +59,23 @@ class UserSerializer(serializers.ModelSerializer):
                   'last_name',
                   'bio',
                   'role')
+
+
+class GetTokenSerializer(serializers.Serializer):
+    username = serializers.RegexField(required=True, regex=r'^[\w.@+-]+\Z$')
+    confirmation_code = serializers.CharField(required=True)
+
+
+class SignupSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True, max_length=254)
+    username = serializers.RegexField(
+        regex=r'^[\w.@+-]+\Z$',
+        required=True
+    )
+
+    def validate_username(self, value):
+        if value.lower() == 'me':
+            raise serializers.ValidationError(
+                'Нельзя создавать пользователя с именем "me".'
+            )
+        return value
