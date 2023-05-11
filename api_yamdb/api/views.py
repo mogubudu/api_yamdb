@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from reviews.models import Title, Category, Genre
-from rest_framework import viewsets
+from rest_framework import filters, viewsets
 
 from .serializers import (TitleSerializer,
                           CategorySerializer,
@@ -31,3 +31,5 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = [isAdmin]
     lookup_field = 'username'
+    filter_backends = [filters.SearchFilter]
+    search_fields = ('username',)
