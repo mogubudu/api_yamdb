@@ -6,6 +6,7 @@ from .serializers import (TitleSerializer,
                           CategorySerializer,
                           GenreSerializer,
                           UserSerializer)
+from .permissions import isAdmin
 
 User = get_user_model()
 
@@ -28,3 +29,5 @@ class TitleViewSet(viewsets.ModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [isAdmin]
+    lookup_field = 'username'

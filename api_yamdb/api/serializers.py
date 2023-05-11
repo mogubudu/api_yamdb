@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
+from rest_framework.validators import UniqueValidator
 
 from reviews.models import Title, Category, Genre
 
@@ -28,10 +29,19 @@ class TitleSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    username = serializers.RegexField(
+        regex=r'^[\w.@+-]+\Z$',
+        max_length=150,
+        required=True,
+        validators=[UniqueValidator(
+            queryset=User.objects.all(),
+            message='Такое имя пользователя уже существует.')]
+    )
+    email = serializers.EmailField(max_length=254, required=True)
+
     class Meta:
         model = User
-        fields = ('id',
-                  'username',
+        fields = ('username',
                   'email',
                   'first_name',
                   'last_name',
