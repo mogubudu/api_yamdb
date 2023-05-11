@@ -70,7 +70,8 @@ class SignupSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True, max_length=254)
     username = serializers.RegexField(
         regex=r'^[\w.@+-]+\Z$',
-        required=True
+        required=True,
+        max_length=150
     )
 
     def validate_username(self, value):
@@ -79,3 +80,14 @@ class SignupSerializer(serializers.Serializer):
                 'Нельзя создавать пользователя с именем "me".'
             )
         return value
+
+
+class UserMeSerializer(serializers.ModelSerializer):
+    """Сериализатор для модели User."""
+    role = serializers.ReadOnlyField()
+
+    class Meta:
+        model = User
+        fields = (
+            'first_name', 'last_name', 'username', 'bio', 'email', 'role'
+        )

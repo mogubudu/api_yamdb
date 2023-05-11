@@ -4,7 +4,7 @@ from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
 from api_yamdb.settings import ADMIN_EMAIL
 from rest_framework import filters, viewsets, status, permissions
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework.response import Response
 
@@ -14,7 +14,7 @@ from .serializers import (TitleSerializer,
                           GenreSerializer,
                           UserSerializer,
                           GetTokenSerializer,
-                          SignupSerializer)
+                          SignupSerializer, UserMeSerializer)
 from .permissions import isAdmin
 
 User = get_user_model()
@@ -42,6 +42,22 @@ class UserViewSet(viewsets.ModelViewSet):
     lookup_field = 'username'
     filter_backends = [filters.SearchFilter]
     search_fields = ('username',)
+
+    @action(
+        detail=False, methods=['get', 'patch'],
+        url_path='me', url_name='me',
+        permission_classes=(permissions.IsAuthenticated,)
+    )
+    def about_me(self, request):
+        serializer = UserMeSerializer(request.user)
+        if request.method != 'PATCH':
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        serializer = UserMeSerializer(
+            request.user, data=request.data, partial=True
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['POST'])
