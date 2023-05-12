@@ -120,7 +120,9 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_FILTER_BACKENDS': [
         'django_filters.rest_framework.DjangoFilterBackend'
-    ]
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 100,
 }
 
 SIMPLE_JWT = {
@@ -132,5 +134,4 @@ EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'emails')
 
-ADMIN_EMAIL = 'hello@topadmin.com'
-
+SERVICE_EMAIL = 'hello@topadmin.com'

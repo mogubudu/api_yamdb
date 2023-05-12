@@ -66,7 +66,7 @@ class GetTokenSerializer(serializers.Serializer):
     confirmation_code = serializers.CharField(required=True)
 
 
-class SignupSerializer(serializers.Serializer):
+class SignUpSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True, max_length=254)
     username = serializers.RegexField(
         regex=r'^[\w.@+-]+\Z$',
