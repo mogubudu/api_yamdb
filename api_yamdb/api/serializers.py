@@ -82,7 +82,7 @@ class SignUpSerializer(serializers.Serializer):
         return value
 
 
-class UserMeSerializer(serializers.ModelSerializer):
+class UserProfileSerializer(serializers.ModelSerializer):
     """Сериализатор для модели User."""
     role = serializers.ReadOnlyField()
 

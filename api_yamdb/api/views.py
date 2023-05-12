@@ -15,7 +15,7 @@ from .serializers import (TitleSerializer,
                           GenreSerializer,
                           UserSerializer,
                           GetTokenSerializer,
-                          SignUpSerializer, UserMeSerializer)
+                          SignUpSerializer, UserProfileSerializer)
 from .permissions import isAdmin
 
 User = get_user_model()
@@ -49,12 +49,12 @@ class UserViewSet(viewsets.ModelViewSet):
             url_path='me', url_name='me',
             permission_classes=(permissions.IsAuthenticated,))
     def profile(self, request):
-        serializer = UserMeSerializer(request.user)
+        serializer = UserProfileSerializer(request.user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     @profile.mapping.patch
     def patch_profile(self, request):
-        serializer = UserMeSerializer(
+        serializer = UserProfileSerializer(
             request.user,
             data=request.data,
             partial=True)
