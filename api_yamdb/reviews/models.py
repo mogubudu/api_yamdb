@@ -77,7 +77,7 @@ class Title(models.Model):
         verbose_name_plural = 'Произведения'
 
 
- class Review(models.Model):
+class Review(models.Model):
     title = models.ForeignKey(
         Title,
         on_delete=models.CASCADE,
