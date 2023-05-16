@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 from api_yamdb.settings import SERVICE_EMAIL
 from rest_framework import filters, viewsets, status, permissions
 from rest_framework.decorators import api_view, permission_classes, action
-from rest_framework.pagination import PageNumberPagination                                     
+from rest_framework.pagination import PageNumberPagination
 from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework.response import Response
 
@@ -20,8 +20,8 @@ from .serializers import (TitleSerializer,
                           ReviewSerializer,
                           CommentSerializer)
 from .permissions import (isAdmin,
-                          IsAdminOrReadOnly,
-                          IsAdminOrOwnerOrReadOnly,)
+                          IsAdminOrOwnerOrReadOnly)
+from .mixins import DestroyCreateListMixins
 
 User = get_user_model()
 
@@ -31,7 +31,7 @@ class GenreViewSet(viewsets.ModelViewSet):
     serializer_class = GenreSerializer
 
 
-class CategoryViewSet(viewsets.ModelViewSet):
+class CategoryViewSet(DestroyCreateListMixins):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
