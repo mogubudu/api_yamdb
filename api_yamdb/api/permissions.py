@@ -1,6 +1,7 @@
 from rest_framework import permissions
 from rest_framework.permissions import SAFE_METHODS
 
+
 class isAdmin(permissions.BasePermission):
     """Проверка на администратора."""
     def has_permission(self, request, view):
