@@ -20,7 +20,6 @@ from .serializers import (TitleSerializer,
                           ReviewSerializer,
                           CommentSerializer)
 from .permissions import (isAdmin,
-                          IsAdminOrReadOnly,
                           IsAdminOrOwnerOrReadOnly,)
 
 User = get_user_model()

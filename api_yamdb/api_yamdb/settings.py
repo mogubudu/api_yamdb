@@ -135,3 +135,7 @@ EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'emails')
 
 SERVICE_EMAIL = 'hello@topadmin.com'
+
+
+MAX_SCORE = 10
+MIN_SCORE = 1
