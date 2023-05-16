@@ -1,7 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from django.utils.text import slugify
 
 
 class User(AbstractUser):
@@ -58,11 +57,6 @@ class Category(models.Model):
     class Meta:
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
-    
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.slug = slugify(self.name)
-        super(Category, self).save(*args, **kwargs)
 
 
 class Genre(models.Model):
@@ -72,19 +66,16 @@ class Genre(models.Model):
     class Meta:
         verbose_name = 'Жанр'
         verbose_name_plural = 'Жанры'
-    
-    def save(self, *args, **kwargs):
-        if not self.id:
-            self.slug = slugify(self.name)
-        super(Genre, self).save(*args, **kwargs)
 
 
 class Title(models.Model):
     name = models.CharField(max_length=256)
     year = models.IntegerField()
     description = models.TextField()
-    category = models.ForeignKey(Category, on_delete=models.PROTECT,
-                                 related_name='titles')
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL,
+                                 related_name='titles',
+                                 null=True,
+                                 blank=True)
     genres = models.ManyToManyField(Genre, related_name='titles')
 
     class Meta:
