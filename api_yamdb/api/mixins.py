@@ -10,3 +10,4 @@ class DestroyCreateListMixins(mixins.CreateModelMixin,
     permission_classes = (IsAdminOrReadOnly,)
     filter_backends = (filters.SearchFilter,)
     search_fields = ('name',)
+    lookup_field = ('slug')
