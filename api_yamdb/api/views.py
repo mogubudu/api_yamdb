@@ -20,7 +20,8 @@ from .serializers import (TitleSerializer,
                           ReviewSerializer,
                           CommentSerializer)
 from .permissions import (isAdmin,
-                          IsAdminOrOwnerOrReadOnly)
+                          IsAdminOrOwnerOrReadOnly,
+                          IsAdminOrReadOnly)
 from .mixins import DestroyCreateListMixins
 
 User = get_user_model()
@@ -39,6 +40,14 @@ class CategoryViewSet(DestroyCreateListMixins):
 class TitleViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerializer
+    search_fields = ['name', 'description']
+    
+    def get_permissions(self):
+        if self.action == 'list' or self.action == 'retrieve':
+            permission_classes = []
+        else:
+            permission_classes = [IsAdminOrReadOnly]
+        return [permission() for permission in permission_classes]
 
 
 class UserViewSet(viewsets.ModelViewSet):
