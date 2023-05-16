@@ -26,7 +26,7 @@ from .mixins import DestroyCreateListMixins
 User = get_user_model()
 
 
-class GenreViewSet(viewsets.ModelViewSet):
+class GenreViewSet(DestroyCreateListMixins):
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
 
