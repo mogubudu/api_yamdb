@@ -19,13 +19,9 @@ from .serializers import (TitleSerializer,
                           SignUpSerializer, UserProfileSerializer,
                           ReviewSerializer,
                           CommentSerializer)
-from .permissions import (isAdmin,
-<<<<<<< HEAD
-                          IsAdminOrOwnerOrReadOnly,)
-=======
-                          IsAdminOrOwnerOrReadOnly)
+from .permissions import (isAdmin,IsAdminOrOwnerOrReadOnly,)
 from .mixins import DestroyCreateListMixins
->>>>>>> develop
+
 
 User = get_user_model()
 
