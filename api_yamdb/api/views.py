@@ -20,6 +20,7 @@ from .serializers import (TitleSerializer,
                           ReviewSerializer,
                           CommentSerializer)
 from .permissions import (isAdmin,
+                          IsAdminOrReadOnly,
                           IsAdminOrOwnerOrReadOnly)
 from .mixins import DestroyCreateListMixins
 
