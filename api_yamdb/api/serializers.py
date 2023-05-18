@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
+from django.db.models import Avg
 
 from reviews.models import Title, Category, Genre, Review, Comment
 
@@ -23,7 +24,14 @@ class CategorySerializer(serializers.ModelSerializer):
 class TitleSerializer(serializers.ModelSerializer):
     genres = GenreSerializer(many=True, read_only=True)
     category = CategorySerializer(read_only=True)
+    rating = serializers.SerializerMethodField()
 
+    def get_rating(self, obj):
+        avg = obj.reviews.aggregate(rating=Avg('score'))
+        if not avg['rating']:
+            return None
+        return int(avg['rating'])
+    
     class Meta:
         model = Title
         fields = '__all__'
@@ -96,30 +104,30 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
 class ReviewSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
-        slug_field="username",
+        slug_field='username',
         read_only=True,
     )
     title = serializers.SlugRelatedField(
-        slug_field="id",
+        slug_field='id',
         many=False,
         read_only=True
     )
 
     class Meta:
-        fields = "__all__"
+        fields = '__all__'
         model = Review
 
     def validate(self, data):
-        if self.context["request"].method != "POST":
+        if self.context['request'].method != 'POST':
             return data
         title = get_object_or_404(
             Title,
-            pk=self.context["view"].kwargs.get("title_id")
+            pk=self.context['view'].kwargs.get('title_id')
         )
-        author = self.context["request"].user
+        author = self.context['request'].user
         if Review.objects.filter(title_id=title, author=author).exists():
             raise serializers.ValidationError(
-                "Вы уже оставляли обзор на данное произведение"
+                'Вы уже оставляли обзор на данное произведение'
             )
         return data
 
@@ -127,10 +135,10 @@ class ReviewSerializer(serializers.ModelSerializer):
 class CommentSerializer(serializers.ModelSerializer):
     author = serializers.SlugRelatedField(
         read_only=True,
-        slug_field="username"
+        slug_field='username'
     )
-    review = serializers.SlugRelatedField(read_only=True, slug_field="text")
+    review = serializers.SlugRelatedField(read_only=True, slug_field='text')
 
     class Meta:
-        fields = "__all__"
+        fields = '__all__'
         model = Comment

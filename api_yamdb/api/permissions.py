@@ -30,7 +30,6 @@ class IsAdminOrReadOnly(permissions.BasePermission):
             )
         return request.method in permissions.SAFE_METHODS
 
-
 class IsAdminOrOwnerOrReadOnly(permissions.BasePermission):
     """Для аутентифицированных пользователей имеющих статус администратора или
     автора иначе только просмотр."""
