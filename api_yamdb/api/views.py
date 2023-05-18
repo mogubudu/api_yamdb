@@ -1,29 +1,26 @@
-from django.db import IntegrityError
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
+from django.db import IntegrityError
+from django.db.models import Avg
 from django.shortcuts import get_object_or_404
-from api_yamdb.settings import SERVICE_EMAIL
-from rest_framework import filters, viewsets, status, permissions
-from rest_framework.decorators import api_view, permission_classes, action
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, permissions, status, viewsets
+from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.pagination import PageNumberPagination
-from rest_framework_simplejwt.tokens import AccessToken
 from rest_framework.response import Response
+from rest_framework_simplejwt.tokens import AccessToken
 
-from reviews.models import Title, Category, Genre, Review
-from .serializers import (TitleSerializer,
-                          CategorySerializer,
-                          GenreSerializer,
-                          UserSerializer,
-                          GetTokenSerializer,
-                          SignUpSerializer, UserProfileSerializer,
-                          ReviewSerializer,
-                          CommentSerializer)
-from .permissions import (isAdmin,
-                          IsAdminOrReadOnly,
-                          IsAdminOrOwnerOrReadOnly)
+from api_yamdb.settings import SERVICE_EMAIL
+from .filters import TitleFilter
 from .mixins import DestroyCreateListMixins
-
+from .permissions import IsAdminOrAuthorOrReadOnly, IsAdminOrReadOnly, isAdmin
+from .serializers import (CategorySerializer, CommentSerializer,
+                          GenreSerializer, GetTokenSerializer,
+                          ReviewSerializer, SignUpSerializer,
+                          TitleListSerializer, TitleSerializer,
+                          UserProfileSerializer, UserSerializer)
+from reviews.models import Category, Genre, Review, Title
 
 User = get_user_model()
 
@@ -39,16 +36,15 @@ class CategoryViewSet(DestroyCreateListMixins):
 
 
 class TitleViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.all()
-    serializer_class = TitleSerializer
-    search_fields = ['name', 'description']
-    
-    def get_permissions(self):
-        if self.action == 'list' or self.action == 'retrieve':
-            permission_classes = []
-        else:
-            permission_classes = [IsAdminOrReadOnly]
-        return [permission() for permission in permission_classes]
+    queryset = Title.objects.annotate(rating=Avg('reviews__score'))
+    permission_classes = (IsAdminOrReadOnly,)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = TitleFilter
+
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return TitleListSerializer
+        return TitleSerializer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -103,7 +99,7 @@ def get_confirmation_code(request):
     username = serializer.validated_data.get('username')
     email = serializer.validated_data.get('email')
     try:
-        user, is_created = User.objects.get_or_create(
+        user, _ = User.objects.get_or_create(
             email=email,
             username=username)
     except IntegrityError:
@@ -127,7 +123,7 @@ def get_confirmation_code(request):
 
 class ReviewViewSet(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
-    permission_classes = [IsAdminOrOwnerOrReadOnly]
+    permission_classes = [IsAdminOrAuthorOrReadOnly]
     pagination_class = PageNumberPagination
 
     def get_queryset(self):
@@ -142,7 +138,7 @@ class ReviewViewSet(viewsets.ModelViewSet):
 
 class CommentViewSet(viewsets.ModelViewSet):
     serializer_class = CommentSerializer
-    permission_classes = [IsAdminOrOwnerOrReadOnly]
+    permission_classes = [IsAdminOrAuthorOrReadOnly]
 
     def get_queryset(self):
         review = get_object_or_404(Review, id=self.kwargs.get('review_id'))
