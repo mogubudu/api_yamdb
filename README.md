@@ -52,13 +52,18 @@ Content-Type: application/json
 **Создание отзыва**
 Чтобы создать отзыв на произведение, нужно отправить POST-запрос на `/api/v1/titles/{title_id}/reviews/`. В теле запроса должны быть указаны оценка и текст отзыва.
 Запрос: 
-*POST /api/v1/titles/1/reviews/*
+```
+POST /api/v1/titles/1/reviews/
 Authorization: Bearer access_token
 Content-Type: application/json
+
+```json
 {
     "score": 9,
     "text": "Great movie!"
 }
+```
+```
 
 
 ## Проект выполняли:
