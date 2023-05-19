@@ -4,7 +4,7 @@ from django.core.management import BaseCommand
 from django.db import IntegrityError
 
 from api_yamdb.settings import BASE_DIR
-from reviews.models import Category, Comment, Genre, Review, Title, User
+from reviews.models import Category, Comment, Genre, TitleGenre, Review, Title, User
 
 TABLES = {
     User: 'users.csv',
@@ -13,6 +13,7 @@ TABLES = {
     Title: 'titles.csv',
     Review: 'review.csv',
     Comment: 'comments.csv',
+    TitleGenre: 'genre_title.csv',
 }
 
 
