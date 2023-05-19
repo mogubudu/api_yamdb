@@ -22,47 +22,59 @@ _Установка_
 ## Примеры использования API:
 
 **Получение списка произведений**
+
 Для получения списка произведений можно воспользоваться эндпойнтом `/api/v1/titles/`. В ответ на запрос будет возвращен список произведений с их основными характеристиками (название, год выпуска, категория, жанры, рейтинг).
-Запрос: _GET /api/v1/titles/_
+Запрос:
+```
+GET /api/v1/titles/?genre=Action
+```
 
 **Получение списка произведений с фильтрацией**
+
 Чтобы получить список произведений с возможностью фильтрации по жанрам, категории и рейтингу, можно отправить GET-запрос на `/api/v1/titles/` с параметрами `genre`, `category` и `rating`, соответственно. Ниже приведен пример запроса с фильтрацией по жанру.
-Запрос: _GET /api/v1/titles/?genre=Action_
+Запрос: 
+```
+GET /api/v1/titles/?genre=Action
+```
 
 **Регистрация пользователя**
+
 Чтобы зарегистрировать пользователя, нужно отправить POST-запрос на `/api/v1/auth/email/`. В теле запроса должны быть указаны email и username пользователя.
 Запрос: 
-_POST /api/v1/auth/email/_
+```
+POST /api/v1/auth/email/
 Content-Type: application/json
 {
     "email": "example@example.com",
     "username": "example",
 }
+```
 
 **Аутентификация пользователя**
+
 Чтобы получить токен аутентификации, нужно отправить POST-запрос на `/api/v1/token/`. В теле запроса указываются email и пароль пользователя.
 Запрос: 
-_POST /api/v1/token/_
+```
+POST /api/v1/token/
 Content-Type: application/json
 {
     "email": "example@example.com",
     "password": "password",
 }
+```
 
 **Создание отзыва**
+
 Чтобы создать отзыв на произведение, нужно отправить POST-запрос на `/api/v1/titles/{title_id}/reviews/`. В теле запроса должны быть указаны оценка и текст отзыва.
 Запрос: 
 ```
 POST /api/v1/titles/1/reviews/
 Authorization: Bearer access_token
 Content-Type: application/json
-
-```json
 {
     "score": 9,
     "text": "Great movie!"
 }
-```
 ```
 
 
