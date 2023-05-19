@@ -4,6 +4,7 @@ from django.db import models
 
 from api_yamdb.settings import MIN_SCORE, MAX_SCORE
 
+
 class User(AbstractUser):
     ADMIN = 'admin'
     MODERATOR = 'moderator'
@@ -59,6 +60,9 @@ class Category(models.Model):
         verbose_name = 'Категория'
         verbose_name_plural = 'Категории'
 
+    def __str__(self):
+        return self.name
+
 
 class Genre(models.Model):
     name = models.CharField(max_length=256)
@@ -68,6 +72,9 @@ class Genre(models.Model):
         verbose_name = 'Жанр'
         verbose_name_plural = 'Жанры'
 
+    def __str__(self):
+        return self.name
+
 
 class Title(models.Model):
     name = models.CharField(max_length=256)
@@ -76,11 +83,14 @@ class Title(models.Model):
     category = models.ForeignKey(Category, on_delete=models.SET_NULL,
                                  related_name='titles',
                                  null=True)
-    genres = models.ManyToManyField(Genre, related_name='titles')
-    
+    genre = models.ManyToManyField(Genre, related_name='titles', blank=True)
+
     class Meta:
         verbose_name = 'Произведение'
         verbose_name_plural = 'Произведения'
+
+    def __str__(self):
+        return self.name
 
 
 class Review(models.Model):

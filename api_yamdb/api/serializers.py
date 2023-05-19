@@ -2,7 +2,6 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
-from django.db.models import Avg
 
 from reviews.models import Title, Category, Genre, Review, Comment
 
@@ -22,19 +21,29 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class TitleSerializer(serializers.ModelSerializer):
-    genres = GenreSerializer(many=True, read_only=True)
-    category = CategorySerializer(read_only=True)
-    rating = serializers.SerializerMethodField()
+    category = serializers.SlugRelatedField(
+        queryset=Category.objects.all(),
+        slug_field='slug'
+    )
+    genre = serializers.SlugRelatedField(
+        queryset=Genre.objects.all(),
+        slug_field='slug',
+        many=True
+    )
 
-    def get_rating(self, obj):
-        avg = obj.reviews.aggregate(rating=Avg('score'))
-        if not avg['rating']:
-            return None
-        return int(avg['rating'])
-    
     class Meta:
-        model = Title
         fields = '__all__'
+        model = Title
+
+
+class TitleListSerializer(serializers.ModelSerializer):
+    category = CategorySerializer(read_only=True)
+    genre = GenreSerializer(read_only=True, many=True)
+    rating = serializers.FloatField()
+
+    class Meta:
+        fields = '__all__'
+        model = Title
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -92,7 +101,6 @@ class SignUpSerializer(serializers.Serializer):
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    """Сериализатор для модели User."""
     role = serializers.ReadOnlyField()
 
     class Meta:
