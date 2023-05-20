@@ -91,7 +91,10 @@ class Title(models.Model):
     category = models.ForeignKey(Category, on_delete=models.SET_NULL,
                                  related_name='titles',
                                  null=True)
-    genre = models.ManyToManyField(Genre, related_name='titles', blank=True, through=TitleGenre)
+    genre = models.ManyToManyField(Genre,
+                                   related_name='titles',
+                                   blank=True,
+                                   through=TitleGenre)
 
     class Meta:
         verbose_name = 'Произведение'
