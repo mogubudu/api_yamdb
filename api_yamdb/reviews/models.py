@@ -83,22 +83,6 @@ class Genre(models.Model):
         return self.name
 
 
-class TitleGenre(models.Model):
-    genre = models.ForeignKey('Genre',
-                              verbose_name='жанр',
-                              on_delete=models.CASCADE)
-    title = models.ForeignKey('Title',
-                              verbose_name='произведение',
-                              on_delete=models.CASCADE)
-
-    class Meta:
-        verbose_name = 'Жанр произведения'
-        verbose_name_plural = 'Жанры произведения'
-
-    def __str__(self):
-        return f'{self.title} {self.genre}'
-
-
 class Title(models.Model):
     name = models.CharField(max_length=256,
                             verbose_name='Название произведения')
@@ -112,8 +96,7 @@ class Title(models.Model):
                                  null=True)
     genre = models.ManyToManyField(Genre,
                                    related_name='titles',
-                                   blank=True,
-                                   through=TitleGenre)
+                                   blank=True)
 
     class Meta:
         verbose_name = 'Произведение'
