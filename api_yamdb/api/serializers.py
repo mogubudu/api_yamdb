@@ -1,3 +1,4 @@
+from datetime import datetime as dt
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
@@ -11,13 +12,13 @@ User = get_user_model()
 class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
-        fields = ('name', 'slug')
+        exclude = ('id',)
 
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ('name', 'slug')
+        exclude = ('id',)
 
 
 class TitleSerializer(serializers.ModelSerializer):
@@ -34,6 +35,13 @@ class TitleSerializer(serializers.ModelSerializer):
     class Meta:
         fields = '__all__'
         model = Title
+
+    def validate_year(self, value):
+        year = dt.now().year
+        if value > year:
+            raise serializers.ValidationError('Год произведения не может '
+                                              'быть больше текущего года.')
+        return value
 
 
 class TitleListSerializer(serializers.ModelSerializer):
@@ -62,13 +70,6 @@ class UserSerializer(serializers.ModelSerializer):
             queryset=User.objects.all(),
             message='Такая почта пользователя уже зарегистрирована.')])
 
-    def validate_username(self, value):
-        if value.lower() == 'me':
-            raise serializers.ValidationError(
-                'Нельзя создавать пользователя с именем "me".'
-            )
-        return value
-
     class Meta:
         model = User
         fields = ('username',
@@ -89,7 +90,7 @@ class SignUpSerializer(serializers.Serializer):
     username = serializers.RegexField(
         regex=r'^[\w.@+-]+\Z$',
         required=True,
-        max_length=150
+        max_length=150,
     )
 
     def validate_username(self, value):
@@ -138,6 +139,13 @@ class ReviewSerializer(serializers.ModelSerializer):
                 'Вы уже оставляли обзор на данное произведение'
             )
         return data
+
+    def validate_score(self, value):
+        if 1 > value > 10:
+            raise serializers.ValidationError(
+                'Оценка может быть от 1 до 10'
+            )
+        return value
 
 
 class CommentSerializer(serializers.ModelSerializer):
