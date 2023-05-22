@@ -77,14 +77,6 @@ class Genre(models.Model):
         return self.name
 
 
-class TitleGenre(models.Model):
-    genre = models.ForeignKey('Genre', on_delete=models.CASCADE)
-    title = models.ForeignKey('Title', on_delete=models.CASCADE)
-
-    def __str__(self):
-        return f'{self.title} {self.genre}'
-
-
 class Title(models.Model):
     name = models.CharField(max_length=256)
     year = models.IntegerField(validators=[validate_year])
@@ -94,8 +86,7 @@ class Title(models.Model):
                                  null=True)
     genre = models.ManyToManyField(Genre,
                                    related_name='titles',
-                                   blank=True,
-                                   through=TitleGenre)
+                                   blank=True)
 
     class Meta:
         verbose_name = 'Произведение'
