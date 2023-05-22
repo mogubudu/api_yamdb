@@ -54,8 +54,11 @@ class User(AbstractUser):
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=256)
-    slug = models.SlugField(max_length=50, unique=True)
+    name = models.CharField(max_length=256,
+                            verbose_name='Название категории')
+    slug = models.SlugField(max_length=50,
+                            verbose_name='Идентификатор категории',
+                            unique=True)
 
     class Meta:
         verbose_name = 'Категория'
@@ -66,8 +69,11 @@ class Category(models.Model):
 
 
 class Genre(models.Model):
-    name = models.CharField(max_length=256)
-    slug = models.SlugField(max_length=50, unique=True)
+    name = models.CharField(max_length=256,
+                            verbose_name='Название жанра')
+    slug = models.SlugField(max_length=50,
+                            verbose_name='Идентификатор жанра',
+                            unique=True)
 
     class Meta:
         verbose_name = 'Жанр'
@@ -78,17 +84,29 @@ class Genre(models.Model):
 
 
 class TitleGenre(models.Model):
-    genre = models.ForeignKey('Genre', on_delete=models.CASCADE)
-    title = models.ForeignKey('Title', on_delete=models.CASCADE)
+    genre = models.ForeignKey('Genre',
+                              verbose_name='жанр',
+                              on_delete=models.CASCADE)
+    title = models.ForeignKey('Title',
+                              verbose_name='произведение',
+                              on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = 'Жанр произведения'
+        verbose_name_plural = 'Жанры произведения'
 
     def __str__(self):
         return f'{self.title} {self.genre}'
 
 
 class Title(models.Model):
-    name = models.CharField(max_length=256)
-    year = models.IntegerField(validators=[validate_year])
-    description = models.TextField()
+    name = models.CharField(max_length=256,
+                            verbose_name='Название произведения')
+    year = models.IntegerField(validators=[validate_year],
+                               verbose_name='Название произведения',
+                               db_index=True)
+    description = models.TextField(verbose_name='Описание произведения',
+                                   blank=True, null=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL,
                                  related_name='titles',
                                  null=True)
