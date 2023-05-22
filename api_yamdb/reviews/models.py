@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from reviews.validators import validate_year
 
 from api_yamdb.settings import MIN_SCORE, MAX_SCORE
 
@@ -86,7 +87,7 @@ class TitleGenre(models.Model):
 
 class Title(models.Model):
     name = models.CharField(max_length=256)
-    year = models.IntegerField()
+    year = models.IntegerField(validators=[validate_year])
     description = models.TextField()
     category = models.ForeignKey(Category, on_delete=models.SET_NULL,
                                  related_name='titles',
