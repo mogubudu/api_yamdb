@@ -96,21 +96,22 @@ def get_token(request):
 def get_confirmation_code(request):
     serializer = SignUpSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
-    username = serializer.validated_data.get('username')
     email = serializer.validated_data.get('email')
+    username = serializer.validated_data.get('username')
+
+    serializer.validate_username(username)
+
     try:
-        user, _ = User.objects.get_or_create(
-            email=email,
-            username=username)
+        user, _ = User.objects.get_or_create(email=email, username=username)
     except IntegrityError:
         return Response(
             'Электронная почта или имя пользователя уже используется.',
-            status=status.HTTP_400_BAD_REQUEST)
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
     confirmation_code = default_token_generator.make_token(user)
     mail_subject = 'Ваш код подтверждения для API_YAMBD'
-    message = (f'Добро пожаловать на борт!\n'
-               f'Ваш код подтверждения: {confirmation_code}')
+    message = f'Добро пожаловать на борт!\nВаш код подтверждения: {confirmation_code}'
     send_mail(
         mail_subject,
         message,
@@ -118,6 +119,7 @@ def get_confirmation_code(request):
         [email],
         fail_silently=False
     )
+
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 

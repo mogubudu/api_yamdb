@@ -54,8 +54,11 @@ class User(AbstractUser):
 
 
 class Category(models.Model):
-    name = models.CharField(max_length=256)
-    slug = models.SlugField(max_length=50, unique=True)
+    name = models.CharField(max_length=256,
+                            verbose_name='Название категории')
+    slug = models.SlugField(max_length=50,
+                            verbose_name='Идентификатор категории',
+                            unique=True)
 
     class Meta:
         verbose_name = 'Категория'
@@ -66,8 +69,11 @@ class Category(models.Model):
 
 
 class Genre(models.Model):
-    name = models.CharField(max_length=256)
-    slug = models.SlugField(max_length=50, unique=True)
+    name = models.CharField(max_length=256,
+                            verbose_name='Название жанра')
+    slug = models.SlugField(max_length=50,
+                            verbose_name='Идентификатор жанра',
+                            unique=True)
 
     class Meta:
         verbose_name = 'Жанр'
@@ -78,9 +84,13 @@ class Genre(models.Model):
 
 
 class Title(models.Model):
-    name = models.CharField(max_length=256)
-    year = models.IntegerField(validators=[validate_year])
-    description = models.TextField()
+    name = models.CharField(max_length=256,
+                            verbose_name='Название произведения')
+    year = models.IntegerField(validators=[validate_year],
+                               verbose_name='Название произведения',
+                               db_index=True)
+    description = models.TextField(verbose_name='Описание произведения',
+                                   blank=True, null=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL,
                                  related_name='titles',
                                  null=True)
