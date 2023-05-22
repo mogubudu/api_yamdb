@@ -87,7 +87,7 @@ class TitleGenre(models.Model):
 
 class Title(models.Model):
     name = models.CharField(max_length=256)
-    year = models.IntegerField()
+    year = models.IntegerField(validators=[validate_year])
     description = models.TextField()
     category = models.ForeignKey(Category, on_delete=models.SET_NULL,
                                  related_name='titles',
