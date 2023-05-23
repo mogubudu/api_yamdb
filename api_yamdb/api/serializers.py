@@ -1,10 +1,11 @@
 from datetime import datetime as dt
+
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
-from reviews.models import Title, Category, Genre, Review, Comment
+from reviews.models import Category, Comment, Genre, Review, Title
 
 User = get_user_model()
 
@@ -99,6 +100,24 @@ class SignUpSerializer(serializers.Serializer):
                 'Нельзя создавать пользователя с именем "me".'
             )
         return value
+
+    def validate(self, data):
+        if not User.objects.filter(
+            username=data.get('username'),
+            email=data.get('email')
+        ).exists():
+
+            if User.objects.filter(username=data.get('username')):
+                raise serializers.ValidationError(
+                    'Пользователь с таким username уже существует'
+                )
+
+            if User.objects.filter(email=data.get('email')):
+                raise serializers.ValidationError(
+                    'Пользователь с таким Email уже существует'
+                )
+
+        return data
 
 
 class UserProfileSerializer(serializers.ModelSerializer):

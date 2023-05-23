@@ -1,9 +1,9 @@
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
-from reviews.validators import validate_year
 
 from api_yamdb.settings import MIN_SCORE, MAX_SCORE
+from reviews.validators import validate_year
 
 
 class User(AbstractUser):
@@ -35,7 +35,11 @@ class User(AbstractUser):
         max_length=30
     )
 
-    confirmation_code = models.CharField(max_length=100, blank=True)
+    confirmation_code = models.CharField(
+        verbose_name='Код подтверждения',
+        max_length=100,
+        blank=True
+    )
 
     class Meta:
         verbose_name = 'Пользователь'
@@ -93,10 +97,12 @@ class Title(models.Model):
                                    blank=True, null=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL,
                                  related_name='titles',
-                                 null=True)
+                                 null=True,
+                                 verbose_name='Категория')
     genre = models.ManyToManyField(Genre,
                                    related_name='titles',
-                                   blank=True)
+                                   blank=True,
+                                   verbose_name='Жанр')
 
     class Meta:
         verbose_name = 'Произведение'
