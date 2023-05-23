@@ -1,7 +1,6 @@
-from datetime import datetime as dt
-
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
+from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
@@ -38,7 +37,7 @@ class TitleSerializer(serializers.ModelSerializer):
         model = Title
 
     def validate_year(self, value):
-        year = dt.now().year
+        year = timezone.now().year
         if value > year:
             raise serializers.ValidationError('Год произведения не может '
                                               'быть больше текущего года.')
@@ -160,7 +159,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         return data
 
     def validate_score(self, value):
-        if 1 > value > 10:
+        if value < 1 or value > 10:
             raise serializers.ValidationError(
                 'Оценка может быть от 1 до 10'
             )
