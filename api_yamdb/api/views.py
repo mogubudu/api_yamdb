@@ -1,7 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.core.mail import send_mail
-from django.db import IntegrityError
 from django.db.models import Avg
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
@@ -95,20 +94,17 @@ def get_token(request):
 @permission_classes([permissions.AllowAny])
 def get_confirmation_code(request):
     serializer = SignUpSerializer(data=request.data)
+
     serializer.is_valid(raise_exception=True)
-    username = serializer.validated_data.get('username')
+
     email = serializer.validated_data.get('email')
-    try:
-        user, _ = User.objects.get_or_create(
-            email=email,
-            username=username)
-    except IntegrityError:
-        return Response(
-            'Электронная почта или имя пользователя уже используется.',
-            status=status.HTTP_400_BAD_REQUEST)
+    username = serializer.validated_data.get('username')
+
+    user, _ = User.objects.get_or_create(email=email, username=username)
 
     confirmation_code = default_token_generator.make_token(user)
     mail_subject = 'Ваш код подтверждения для API_YAMBD'
+
     message = (f'Добро пожаловать на борт!\n'
                f'Ваш код подтверждения: {confirmation_code}')
     send_mail(
@@ -118,6 +114,7 @@ def get_confirmation_code(request):
         [email],
         fail_silently=False
     )
+
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
